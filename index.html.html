@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratorio de Circuitos con Esquema Dinámico</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-950 text-gray-100 font-sans min-h-screen flex flex-col">
+
+    <header class="bg-gray-900 border-b border-gray-800 p-5 shadow-md text-center">
+        <h1 class="text-2xl font-bold text-emerald-400 tracking-wide">Laboratorio de Circuitos: Multi-Escala</h1>
+        <p class="text-gray-400 mt-1 text-xs sm:text-sm">Análisis de configuraciones con esquemas eléctricos interactivos en tiempo real</p>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <section class="lg:col-span-5 flex flex-col gap-4">
+            
+            <div class="bg-gray-900 rounded-xl p-4 border border-gray-800 shadow-md">
+                <h2 class="text-base font-semibold text-emerald-400 mb-3 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span> 1. Fuente de Alimentación
+                </h2>
+                <div class="flex justify-between text-sm mb-1">
+                    <label for="input-vcc" class="text-gray-300">Voltaje Continuo (V<sub>cc</sub>):</label>
+                    <span id="txt-vcc" class="text-emerald-400 font-mono font-bold">12 V</span>
+                </div>
+                <input type="range" id="input-vcc" min="1" max="100" value="12" step="1" oninput="updateCircuit()" class="w-full accent-emerald-400 bg-gray-800 h-2 rounded-lg cursor-pointer">
+            </div>
+
+            <div class="bg-gray-900 rounded-xl p-4 border border-gray-800 shadow-md">
+                <h2 class="text-base font-semibold text-amber-400 mb-3 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-amber-400"></span> 2. Asociación de Resistencias
+                </h2>
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="setTopology('serie')" id="btn-serie" class="py-2 px-3 rounded-lg font-bold text-xs transition bg-amber-500 text-gray-950 shadow-md">SERIE</button>
+                    <button onclick="setTopology('paralelo')" id="btn-paralelo" class="py-2 px-3 rounded-lg font-bold text-xs transition bg-gray-800 text-gray-400 hover:bg-gray-700">PARALELO</button>
+                    <button onclick="setTopology('mixto')" id="btn-mixto" class="py-2 px-3 rounded-lg font-bold text-xs transition bg-gray-800 text-gray-400 hover:bg-gray-700">MIXTO</button>
+                </div>
+            </div>
+
+            <div class="bg-gray-900 rounded-xl p-4 border border-gray-800 shadow-md flex flex-col gap-4">
+                <h2 class="text-base font-semibold text-cyan-400 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-cyan-400"></span> 3. Ajuste de Componentes
+                </h2>
+
+                <div class="bg-gray-950 p-3 rounded-lg border border-gray-800">
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="text-xs font-bold text-gray-300">Resistencia R<sub>1</sub></label>
+                        <div class="flex items-center gap-1.5">
+                            <span id="txt-r1" class="text-cyan-400 font-mono font-bold text-xs mr-2">100 Ω</span>
+                            <select id="scale-r1" onchange="updateCircuit()" class="bg-gray-800 text-gray-200 text-xs font-mono rounded px-1.5 py-0.5 border border-gray-700 outline-none">
+                                <option value="1">Ω</option>
+                                <option value="1000" selected>kΩ</option>
+                                <option value="1000000">MΩ</option>
+                            </select>
+                        </div>
+                    </div>
+                    <input type="range" id="input-r1" min="1" max="999" value="100" step="1" oninput="updateCircuit()" class="w-full accent-cyan-400 bg-gray-800 h-1.5 rounded-lg cursor-pointer">
+                </div>
+
+                <div class="bg-gray-950 p-3 rounded-lg border border-gray-800">
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="text-xs font-bold text-gray-300">Resistencia R<sub>2</sub></label>
+                        <div class="flex items-center gap-1.5">
+                            <span id="txt-r2" class="text-cyan-400 font-mono font-bold text-xs mr-2">220 Ω</span>
+                            <select id="scale-r2" onchange="updateCircuit()" class="bg-gray-800 text-gray-200 text-xs font-mono rounded px-1.5 py-0.5 border border-gray-700 outline-none">
+                                <option value="1">Ω</option>
+                                <option value="1000" selected>kΩ</option>
+                                <option value="1000000">MΩ</option>
+                            </select>
+                        </div>
+                    </div>
+                    <input type="range" id="input-r2" min="1" max="999" value="220" step="1" oninput="updateCircuit()" class="w-full accent-cyan-400 bg-gray-800 h-1.5 rounded-lg cursor-pointer">
+                </div>
+
+                <div class="bg-gray-950 p-3 rounded-lg border border-gray-800">
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="text-xs font-bold text-gray-300">Resistencia R<sub>3</sub></label>
+                        <div class="flex items-center gap-1.5">
+                            <span id="txt-r3" class="text-cyan-400 font-mono font-bold text-xs mr-2">470 Ω</span>
+                            <select id="scale-r3" onchange="updateCircuit()" class="bg-gray-800 text-gray-200 text-xs font-mono rounded px-1.5 py-0.5 border border-gray-700 outline-none">
+                                <option value="1">Ω</option>
+                                <option value="1000" selected>kΩ</option>
+                                <option value="1000000">MΩ</option>
+                            </select>
+                        </div>
+                    </div>
+                    <input type="range" id="input-r3" min="1" max="999" value="470" step="1" oninput="updateCircuit()" class="w-full accent-cyan-400 bg-gray-800 h-1.5 rounded-lg cursor-pointer">
+                </div>
+            </div>
+
+        </section>
+
+        <section class="lg:col-span-7 flex flex-col gap-4">
+            
+            <div class="bg-gray-900 rounded-xl p-4 border border-gray-800 shadow-md flex flex-col items-center justify-center min-h-[220px] relative">
+                <span class="text-[10px] font-mono text-gray-500 uppercase tracking-wider absolute top-3 left-4">Plano Esquemático Dinámico</span>
+                <div id="txt-topology-badge" class="absolute top-2 right-4 text-[10px] font-mono bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded uppercase font-bold">SERIE</div>
+                
+                <div class="w-full flex justify-center items-center mt-6">
+                    <svg id="svg-circuit" width="420" height="160" viewBox="0 0 420 160" class="bg-black/30 rounded-lg border border-gray-800/60 p-2"></svg>
+                </div>
+            </div>
+
+            <div class="bg-gray-900 rounded-xl p-5 border border-gray-800 shadow-2xl flex-1 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-300 mb-3 flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Mediciones del Panel (Ley de Ohm)
+                    </h3>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs font-mono">
+                            <thead class="bg-gray-950 text-gray-400 uppercase text-[10px] border border-gray-800">
+                                <tr>
+                                    <th class="p-2.5">Parámetro</th>
+                                    <th class="p-2.5">Resistencia (&Omega;)</th>
+                                    <th class="p-2.5">Voltaje Caída (V)</th>
+                                    <th class="p-2.5">Corriente Rama</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-800 border border-gray-800 bg-black/10">
+                                <tr>
+                                    <td class="p-2.5 font-bold text-gray-300">Componente R1</td>
+                                    <td id="m-r1-val" class="p-2.5 text-cyan-400">--</td>
+                                    <td id="m-v1-val" class="p-2.5 text-amber-400">--</td>
+                                    <td id="m-i1-val" class="p-2.5 text-emerald-400">--</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2.5 font-bold text-gray-300">Componente R2</td>
+                                    <td id="m-r2-val" class="p-2.5 text-cyan-400">--</td>
+                                    <td id="m-v2-val" class="p-2.5 text-amber-400">--</td>
+                                    <td id="m-i2-val" class="p-2.5 text-emerald-400">--</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2.5 font-bold text-gray-300">Componente R3</td>
+                                    <td id="m-r3-val" class="p-2.5 text-cyan-400">--</td>
+                                    <td id="m-v3-val" class="p-2.5 text-amber-400">--</td>
+                                    <td id="m-i3-val" class="p-2.5 text-emerald-400">--</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-3 mt-4 pt-4 border-t border-gray-800 text-center">
+                    <div class="bg-gray-950 p-2.5 rounded border border-gray-800">
+                        <span class="text-gray-500 block text-[9px] uppercase tracking-wider">R Equivalente</span>
+                        <span id="total-req" class="text-sm font-bold text-white">--</span>
+                    </div>
+                    <div class="bg-gray-950 p-2.5 rounded border border-gray-800">
+                        <span class="text-gray-500 block text-[9px] uppercase tracking-wider">Corriente Total</span>
+                        <span id="total-it" class="text-sm font-bold text-emerald-400">--</span>
+                    </div>
+                    <div class="bg-gray-950 p-2.5 rounded border border-gray-800">
+                        <span class="text-gray-500 block text-[9px] uppercase tracking-wider">Potencia Total</span>
+                        <span id="total-pt" class="text-sm font-bold text-purple-400">--</span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <footer class="bg-gray-900 border-t border-gray-800 p-2 text-center text-[11px] text-gray-500 font-mono">
+        Análisis Óhmico Avanzado | El diagrama SVG superior dibuja automáticamente las mallas eléctricas según el modo activo.
+    </footer>
+
+    <script>
+        let currentTopology = 'serie';
+
+        // Definiciones de fragmentos de código SVG reutilizables para los símbolos eléctricos básicos
+        const SIMBOLO_FUENTE = `
+            <circle cx="40" cy="80" r="18" fill="none" stroke="#10b981" stroke-width="2.5"/>
+            <line x1="40" y1="68" x2="40" y2="76" stroke="#10b981" stroke-width="2"/>
+            <line x1="36" y1="72" x2="44" y2="72" stroke="#10b981" stroke-width="2"/>
+            <line x1="36" y1="88" x2="44" y2="88" stroke="#10b981" stroke-width="2"/>
+            <text x="14" y="84" fill="#10b981" font-size="11" font-family="monospace" font-weight="bold">Vcc</text>
+        `;
+
+        function generarSimboloResistorHorizontal(x, y, nombre) {
+            return `
+                <text x="${x+12}" y="${y-12}" fill="#38bdf8" font-size="11" font-family="monospace" font-weight="bold">${nombre}</text>
+                <line x1="${x}" y1="${y}" x2="${x+10}" y2="${y}" stroke="#4b5563" stroke-width="2"/>
+                <path d="M ${x+10} ${y} L ${x+14} ${y-8} L ${x+20} ${y+8} L ${x+26} ${y-8} L ${x+32} ${y+8} L ${x+38} ${y-8} L ${x+44} ${y+8} L ${x+48} ${y}" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linejoin="round"/>
+                <line x1="${x+48}" y1="${y}" x2="${x+58}" y2="${y}" stroke="#4b5563" stroke-width="2"/>
+            `;
+        }
+
+        function generarSimboloResistorVertical(x, y, nombre) {
+            return `
+                <text x="${x+16}" y="${y+24}" fill="#38bdf8" font-size="11" font-family="monospace" font-weight="bold">${nombre}</text>
+                <line x1="${x}" y1="${y}" x2="${x}" y2="${y+10}" stroke="#4b5563" stroke-width="2"/>
+                <path d="M ${x} ${y+10} L ${x-8} ${y+14} L ${x+8} ${y+20} L ${x-8} ${y+26} L ${x+8} ${y+32} L ${x-8} ${y+38} L ${x+8} ${y+44} L ${x} ${y+48}" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linejoin="round"/>
+                <line x1="${x}" y1="${y+48}" x2="${x}" y2="${y+58}" stroke="#4b5563" stroke-width="2"/>
+            `;
+        }
+
+        function renderCircuitDiagram(topology) {
+            const svg = document.getElementById('svg-circuit');
+            let htmlContent = '';
+
+            // Dibujar líneas base comunes y la fuente
+            htmlContent += SIMBOLO_FUENTE;
+            // Línea que sale del polo positivo hacia arriba y de masa hacia abajo
+            htmlContent += `<line x1="40" y1="62" x2="40" y2="30" stroke="#4b5563" stroke-width="2"/>`;
+            htmlContent += `<line x1="40" y1="98" x2="40" y2="130" stroke="#4b5563" stroke-width="2"/>`;
+
+            if (topology === 'serie') {
+                // Malla Serie: R1, R2, R3 alineados horizontalmente arriba
+                htmlContent += `<line x1="40" y1="30" x2="100" y2="30" stroke="#4b5563" stroke-width="2"/>`;
+                htmlContent += generarSimboloResistorHorizontal(100, 30, 'R1');
+                htmlContent += `<line x1="158" y1="30" x2="200" y2="30" stroke="#4b5563" stroke-width="2"/>`;
+                htmlContent += generarSimboloResistorHorizontal(200, 30, 'R2');
+                htmlContent += `<line x1="258" y1="30" x2="300" y2="30" stroke="#4b5563" stroke-width="2"/>`;
+                htmlContent += generarSimboloResistorHorizontal(300, 30, 'R3');
+                
+                // Cierre de malla hacia masa
+                htmlContent += `<line x1="358" y1="30" x2="380" y2="30" stroke="#4b5563" stroke-width="2"/>`;
+                htmlContent += `<line x1="380" y1="30" x2="380" y2="130" stroke="#4b5563" stroke-width="2"/>`;
+                htmlContent += `<line x1="380" y1="130" x2="40" y2="130" stroke="#4b5563" stroke-width="2"/>`;
+            } 
+            else if (topology === 'paralelo') {
+                // Tres ramas verticales paralelas
+                htmlContent += `<line x1="40" y1="30" x2="320" y2="30" stroke="#4b5563" stroke-width="2"/>`;
+                htmlContent += `<line x1="40" y1="130" x2="320" y2="130" stroke="#4b5563" stroke-width="2"/>`;
+                
+                // Nodos de derivación
+                htmlContent += `<circle cx="120" cy="30" r="3" fill="#4b5563"/><circle cx="120" cy="130" r="3" fill="#4b5563"/>`;
+                htmlContent += `<circle cx="220" cy="30" r="3" fill="#4b5563"/><circle cx="220" cy="130" r="3" fill="#4b5563"/>`;
+                htmlContent += `<circle cx="320" cy="30" r="3" fill="#4b5563"/><circle cx="320" cy="130" r="3" fill="#4b5563"/>`;
+
+                // Ramas con componentes verticales
+                htmlContent += `<line x1="120" y1="30" x2="120" y2="50" stroke="#4b5563" stroke-width="2"/>`;
+                htmlContent += generarSimboloResistorVertical(120, 50, 'R1');
+                htmlContent += `<line x1="120" y1="108" x2="120" y2="130" stroke="#4b5563" stroke-width="2"/>`;
+
+                htmlContent += `<line x1="220" y1="30" x2="220" y2="50" stroke="#4b5563" stroke-width="2"/>`;
+                htmlContent += generarSimboloResistorVertical(220, 50, 'R2');
+                htmlContent += `<line x1="220" y1="108" x2="220" y2="130" stroke="#4b5563" stroke-width="2"/>`;
+
+                htmlContent += `<line x1="320" y1="30" x2="320" y2="50" stroke="#4b5563" stroke-width="2"/>`;
+                htmlContent += generarSimboloResistorVertical(320, 50, 'R3');
+                htmlContent += `<line x1="320" y1="108" x2="320" y2="130" stroke="#4b5563" stroke-width="2"/>`;
+            } 
+            else if (topology === 'mixto') {
+                // R1 en serie arriba, luego abre un nodo hacia el paralelo de R2 y R3
+                htmlContent += `<line x1="40" y1="30" x2="100" y2="30" stroke="#4b5563" stroke-width="2"/>`;
+                htmlContent += generarSimboloResistorHorizontal(100, 30, 'R1');
+                htmlContent += `<line x1="158" y1="30" x2="220" y2="30" stroke="#4b5563" stroke-width="2"/>`;
+                
+                // Nodo distribuidor
+                htmlContent += `<circle cx="220" cy="30" r="3" fill="#4b5563"/>`;
+                htmlContent += `<line x1="220" y1="30" x2="300" y2="30" stroke="#4b5563" stroke-width="2"/>`;
+                
+                // Rama R2 (Izquierda del paralelo)
+                htmlContent += `<line x1="220" y1="30" x2="220" y2="50" stroke="#4b5563" stroke-width="2"/>`;
+                htmlContent += generarSimboloResistorVertical(220, 50, 'R2');
+                htmlContent += `<line x1="220" y1="108" x2="220" y2="130" stroke="#4b5563" stroke-width="2"/>`;
+                
+                // Rama R3 (Derecha del paralelo)
+                htmlContent += `<line x1="300" y1="30" x2="300" y2="50" stroke="#4b5563" stroke-width="2"/>`;
+                htmlContent += generarSimboloResistorVertical(300, 50, 'R3');
+                htmlContent += `<line x1="300" y1="108" x2="300" y2="130" stroke="#4b5563" stroke-width="2"/>`;
+
+                // Retornos de masa unidos
+                htmlContent += `<circle cx="220" cy="130" r="3" fill="#4b5563"/>`;
+                htmlContent += `<line x1="300" y1="130" x2="220" y2="130" stroke="#4b5563" stroke-width="2"/>`;
+                htmlContent += `<line x1="220" y1="130" x2="40" y2="130" stroke="#4b5563" stroke-width="2"/>`;
+            }
+
+            svg.innerHTML = htmlContent;
+        }
+
+        // Formateadores de unidades (idénticos a la versión anterior)
+        function formatOhm(valInOhms) {
+            if (valInOhms >= 1000000) return `${(valInOhms / 1000000).toFixed(2)} MΩ`;
+            if (valInOhms >= 1000) return `${(valInOhms / 1000).toFixed(1)} kΩ`;
+            return `${valInOhms.toFixed(0)} Ω`;
+        }
+
+        function formatAmpere(valInAmperes) {
+            if (valInAmperes === 0) return "0.00 A";
+            const absVal = Math.abs(valInAmperes);
+            if (absVal >= 1) return `${valInAmperes.toFixed(3)} A`;
+            if (absVal >= 0.001) return `${(valInAmperes * 1000).toFixed(2)} mA`;
+            if (absVal >= 0.000001) return `${(valInAmperes * 1000000).toFixed(1)} μA`;
+            return `${(valInAmperes * 1000000000).toFixed(1)} nA`;
+        }
+
+        function formatWatt(valInWatts) {
+            if (valInWatts >= 1) return `${valInWatts.toFixed(2)} W`;
+            if (valInWatts >= 0.001) return `${(valInWatts * 1000).toFixed(1)} mW`;
+            return `${(valInWatts * 1000000).toFixed(1)} μW`;
+        }
+
+        function setTopology(topology) {
+            currentTopology = topology;
+            
+            ['serie', 'paralelo', 'mixto'].forEach(t => {
+                const btn = document.getElementById(`btn-${t}`);
+                if (t === topology) {
+                    btn.className = "py-2 px-3 rounded-lg font-bold text-xs transition bg-amber-500 text-gray-950 shadow-md";
+                } else {
+                    btn.className = "py-2 px-3 rounded-lg font-bold text-xs transition bg-gray-800 text-gray-400 hover:bg-gray-700";
+                }
+            });
+
+            document.getElementById('txt-topology-badge').innerText = topology.toUpperCase();
+            
+            // Forzar el dibujado de los cables y resistencias del SVG
+            renderCircuitDiagram(topology);
+            updateCircuit();
+        }
+
+        function updateCircuit() {
+            const Vcc = parseFloat(document.getElementById('input-vcc').value);
+            document.getElementById('txt-vcc').innerText = `${Vcc} V`;
+
+            const r1_base = parseFloat(document.getElementById('input-r1').value);
+            const r1_mult = parseFloat(document.getElementById('scale-r1').value);
+            const R1 = r1_base * r1_mult;
+
+            const r2_base = parseFloat(document.getElementById('input-r2').value);
+            const r2_mult = parseFloat(document.getElementById('scale-r2').value);
+            const R2 = r2_base * r2_mult;
+
+            const r3_base = parseFloat(document.getElementById('input-r3').value);
+            const r3_mult = parseFloat(document.getElementById('scale-r3').value);
+            const R3 = r3_base * r3_mult;
+
+            document.getElementById('txt-r1').innerText = r1_mult === 1000 ? `${r1_base} kΩ` : (r1_mult === 1000000 ? `${r1_base} MΩ` : `${r1_base} Ω`);
+            document.getElementById('txt-r2').innerText = r2_mult === 1000 ? `${r2_base} kΩ` : (r2_mult === 1000000 ? `${r2_base} MΩ` : `${r2_base} Ω`);
+            document.getElementById('txt-r3').innerText = r3_mult === 1000 ? `${r3_base} kΩ` : (r3_mult === 1000000 ? `${r3_base} MΩ` : `${r3_base} Ω`);
+
+            document.getElementById('m-r1-val').innerText = formatOhm(R1);
+            document.getElementById('m-r2-val').innerText = formatOhm(R2);
+            document.getElementById('m-r3-val').innerText = formatOhm(R3);
+
+            let Req = 0;
+            let V1 = 0, V2 = 0, V3 = 0;
+            let I1 = 0, I2 = 0, I3 = 0;
+            let Itotal = 0;
+
+            if (currentTopology === 'serie') {
+                Req = R1 + R2 + R3;
+                Itotal = Vcc / Req;
+                I1 = I2 = I3 = Itotal;
+                V1 = Itotal * R1; V2 = Itotal * R2; V3 = Itotal * R3;
+            } 
+            else if (currentTopology === 'paralelo') {
+                Req = 1 / ((1 / R1) + (1 / R2) + (1 / R3));
+                Itotal = Vcc / Req;
+                V1 = V2 = V3 = Vcc;
+                I1 = Vcc / R1; I2 = Vcc / R2; I3 = Vcc / R3;
+            } 
+            else if (currentTopology === 'mixto') {
+                const Rparallel_23 = (R2 * R3) / (R2 + R3);
+                Req = R1 + Rparallel_23;
+                Itotal = Vcc / Req;
+                I1 = Itotal;
+                V1 = Itotal * R1;
+                const Vparallel = Vcc - V1;
+                V2 = V3 = Vparallel;
+                I2 = Vparallel / R2; I3 = Vparallel / R3;
+            }
+
+            const Ptotal = Vcc * Itotal;
+
+            document.getElementById('m-v1-val').innerText = `${V1.toFixed(2)} V`;
+            document.getElementById('m-v2-val').innerText = `${V2.toFixed(2)} V`;
+            document.getElementById('m-v3-val').innerText = `${V3.toFixed(2)} V`;
+
+            document.getElementById('m-i1-val').innerText = formatAmpere(I1);
+            document.getElementById('m-i2-val').innerText = formatAmpere(I2);
+            document.getElementById('m-i3-val').innerText = formatAmpere(I3);
+
+            document.getElementById('total-req').innerText = formatOhm(Req);
+            document.getElementById('total-it').innerText = formatAmpere(Itotal);
+            document.getElementById('total-pt').innerText = formatWatt(Ptotal);
+        }
+
+        window.onload = () => {
+            renderCircuitDiagram('serie');
+            updateCircuit();
+        };
+    </script>
+</body>
+</html>
